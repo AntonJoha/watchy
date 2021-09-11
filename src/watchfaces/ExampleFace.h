@@ -6,8 +6,8 @@
 class WatchfaceExample : public Watchface
 {
     public:
-        int handleButtonPress(uint64_t wakeupBit);
-        bool drawWatchFace();
+        int handleButtonPress(uint64_t wakeupBit, void*);
+        bool drawWatchFace(void*);
 };
 
 #endif //WATCHFACE_EXAMPLE_H

@@ -5,8 +5,8 @@
 class Watchface{
     public:
         //Return the state the clock is supposed to be in
-        virtual int handleButtonPress(uint64_t wakeupBit);
-        virtual bool drawWatchFace();
+        virtual int handleButtonPress(uint64_t wakeupBit, void* data);
+        virtual bool drawWatchFace(void * data);
 };
 
 

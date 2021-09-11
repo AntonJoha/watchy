@@ -13,7 +13,7 @@ RTC_DATA_ATTR bool BLE_CONFIGURED;
 RTC_DATA_ATTR weatherData Watchy::currentWeather;
 RTC_DATA_ATTR int weatherIntervalCounter = WEATHER_UPDATE_INTERVAL;
 Watchface *Watchy::face;
-RTC_DATA_ATTR byte Watchy::data[2048];
+RTC_DATA_ATTR byte Watchy::data[DATASIZE];
 
 void Watchy::setWatchface(Watchface *f)
 {
@@ -259,7 +259,7 @@ void _menuHandleButtonPress(uint64_t wakeupBit)
 
 void _watchFaceHandleButtonPress(uint64_t wakeupBit)
 {
-    guiState = face->handleButtonPress(wakeupBit);
+    guiState = face->handleButtonPress(wakeupBit, &Watchy::data);
     if(guiState = MAIN_MENU_STATE) Watchy::showMenu(true);
 }
 
@@ -649,26 +649,10 @@ void Watchy::showAccelerometer(){
 void Watchy::showWatchFace(bool partialRefresh){
   display.init(0, false); //_initial_refresh to false to prevent full update on init
   display.setFullWindow();
-  //drawWatchFace();
-  Watchy::face->drawWatchFace();
+  Watchy::face->drawWatchFace(&Watchy::data);
   display.display(partialRefresh); //partial refresh
   display.hibernate();
   guiState = WATCHFACE_STATE;
-}
-
-void Watchy::drawWatchFace(){
-    display.setFont(&DSEG7_Classic_Bold_53);
-    display.setCursor(5, 53+60);
-    if(Watchy::currentTime.Hour < 10){
-        display.print("0");
-    }
-    display.print(Watchy::currentTime.Hour);
-    display.print(":");
-    if(Watchy::currentTime.Minute < 10){
-        display.print("0");
-    }
-    display.println(Watchy::currentTime.Minute);
-    display.setCursor(5,0);
 }
 
 weatherData Watchy::getWeatherData(){

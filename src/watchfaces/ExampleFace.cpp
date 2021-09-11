@@ -1,7 +1,7 @@
 #include "ExampleFace.h"
 #include "Watchy.h"
 
-int WatchfaceExample::handleButtonPress(uint64_t wakeupBit)
+int WatchfaceExample::handleButtonPress(uint64_t wakeupBit, void* data)
 {
     if (wakeupBit & MENU_BTN_MASK)
     {
@@ -135,11 +135,16 @@ struct vertices getClockVertices(double angle, double outerRadius, double innerR
 
 
 
-bool WatchfaceExample::drawWatchFace()
+bool WatchfaceExample::drawWatchFace(void* data)
 {
     auto *display = Watchy::getDisplay();
     auto currentTime = Watchy::getTime();
 
+	int *value = (int*) data;
+
+	if (*value == 0) *value = 10;
+
+	*value += 1;
 
 	display->fillScreen(GxEPD_WHITE);
 	
@@ -153,5 +158,8 @@ bool WatchfaceExample::drawWatchFace()
 	vertices = getClockVertices(angle, 50.0, 5.0);
 	display->drawTriangle(vertices.pos[0].x,vertices.pos[0].y,vertices.pos[1].x,vertices.pos[1].y,vertices.pos[2].x,vertices.pos[2].y,GxEPD_BLACK);
 	
+	display->println(*value);
+
+	return true;
 
 }

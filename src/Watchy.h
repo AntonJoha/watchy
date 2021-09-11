@@ -13,8 +13,10 @@
 #include "BLE.h"
 #include "bma.h"
 #include "config.h"    
-#include "Watchface.h"
-#include "ExampleFace.h"
+#include "watchfaces/Watchface.h"
+
+
+#define DATASIZE 2048
 
 typedef struct weatherData{
     int8_t temperature;

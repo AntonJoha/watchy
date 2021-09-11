@@ -1,5 +1,5 @@
 #include "Watchy.h"
-#include "ExampleFace.h"
+#include "watchfaces/ExampleFace.h"
 
 void setup()
 {
