@@ -1,5 +1,5 @@
 #include "Watchy.h"
-
+#include "apps/AppShowBattery.h"
 using namespace Watchy;
 
 RTC_DATA_ATTR DS3232RTC Watchy::RTC(false);
@@ -49,7 +49,7 @@ void Watchy::init(String datetime){
 
     switch (wakeup_reason)
     {
-        #ifdef ESP_Watchy::RTC
+        #ifdef ESP_RTC
         case ESP_SLEEP_WAKEUP_TIMER: //ESP Internal Watchy::RTC
             Watchy::RTC.read(Watchy::currentTime);
             Watchy::currentTime.Minute++;
@@ -80,7 +80,7 @@ void Watchy::init(String datetime){
             handleButtonPress();
             break;
         default: //reset
-            #ifndef ESP_Watchy::RTC
+            #ifndef ESP_RTC
             Watchy::_rtcConfig(datetime);
             #endif
             Watchy::_bmaConfig();
@@ -92,10 +92,10 @@ void Watchy::init(String datetime){
 
 void Watchy::deepSleep()
 {
-    #ifndef ESP_Watchy::RTC
+    #ifndef ESP_RTC
     esp_sleep_enable_ext0_wakeup(RTC_PIN, 0); //enable deep sleep wake on Watchy::RTC interrupt
     #endif
-    #ifdef ESP_Watchy::RTC
+    #ifdef ESP_RTC
     esp_sleep_enable_timer_wakeup(60000000);
     #endif
     esp_sleep_enable_ext1_wakeup(BTN_PIN_MASK, ESP_EXT1_WAKEUP_ANY_HIGH); //enable deep sleep wake on button press
@@ -260,7 +260,7 @@ void _menuHandleButtonPress(uint64_t wakeupBit)
 void _watchFaceHandleButtonPress(uint64_t wakeupBit)
 {
     guiState = face->handleButtonPress(wakeupBit, &Watchy::data);
-    if(guiState = MAIN_MENU_STATE) Watchy::showMenu(true);
+    if(guiState == MAIN_MENU_STATE)  Watchy::showMenu(true);
 }
 
 void _appHandleButtonPress(uint64_t wakeupBit)
@@ -357,21 +357,8 @@ void Watchy::showFastMenu(){
 }
 
 void Watchy::showBattery(){
-    display.init(0, false); //_initial_refresh to false to prevent full update on init
-    display.setFullWindow();
-    display.fillScreen(GxEPD_BLACK);
-    display.setFont(&FreeMonoBold9pt7b);
-    display.setTextColor(GxEPD_WHITE);
-    display.setCursor(20, 30);
-    display.println("Battery Voltage:");
-    float voltage = getBatteryVoltage();
-    display.setCursor(70, 80);
-    display.print(voltage);
-    display.println("V");
-    display.display(false); //full refresh
-    display.hibernate();
-
-    guiState = APP_STATE;
+    ShowBattery sh = ShowBattery();
+    sh.draw(nullptr);
 }
 
 void Watchy::showBuzz(){
